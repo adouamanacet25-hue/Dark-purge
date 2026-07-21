@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
     <style>
+        /* === Même CSS que précédemment, inchangé === */
         * {
             margin: 0;
             padding: 0;
@@ -183,7 +184,20 @@
             z-index: 1;
             padding: 20px;
         }
-        #home .logo-main {
+        .logo-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .logo-main img {
+            width: 80px;
+            height: auto;
+        }
+        .typing-title {
+            display: inline-block;
             font-family: 'Orbitron', sans-serif;
             font-size: 4.5rem;
             font-weight: 900;
@@ -191,19 +205,27 @@
             color: #e74c3c;
             text-shadow: 0 0 30px rgba(231, 76, 60, 0.6);
             letter-spacing: 6px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
+            line-height: 1.2;
         }
-        #home .logo-main img {
-            width: 80px;
-            height: auto;
-            margin-right: 10px;
+        .typing-title .letter {
+            display: inline-block;
+            animation: letterFade 3s ease-in-out infinite;
         }
-        #home .logo-main span {
-            color: #2e86de;
+        .typing-title .letter:nth-child(1) { animation-delay: 0s; }
+        .typing-title .letter:nth-child(2) { animation-delay: 0.1s; }
+        .typing-title .letter:nth-child(3) { animation-delay: 0.2s; }
+        .typing-title .letter:nth-child(4) { animation-delay: 0.3s; }
+        .typing-title .letter:nth-child(5) { animation-delay: 0.4s; }
+        .typing-title .letter:nth-child(6) { animation-delay: 0.5s; }
+        .typing-title .letter:nth-child(7) { animation-delay: 0.6s; }
+        .typing-title .letter:nth-child(8) { animation-delay: 0.7s; }
+        .typing-title .letter:nth-child(9) { animation-delay: 0.8s; }
+        .typing-title .letter:nth-child(10) { animation-delay: 0.9s; }
+        .typing-title .letter:nth-child(11) { animation-delay: 1.0s; }
+
+        @keyframes letterFade {
+            0%, 100% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0; transform: translateY(-20px); }
         }
         #home .subtitle {
             font-size: 1.1rem;
@@ -327,7 +349,8 @@
             margin-bottom: 6px;
         }
         .func-page input[type="tel"],
-        .func-page input[type="text"] {
+        .func-page input[type="text"],
+        .func-page input[type="password"] {
             width: 100%;
             padding: 14px 18px;
             border-radius: 14px;
@@ -502,11 +525,11 @@
             .menu-grid {
                 grid-template-columns: 1fr;
             }
-            #home .logo-main {
-                font-size: 3rem;
+            .typing-title {
+                font-size: 2.8rem !important;
             }
-            #home .logo-main img {
-                width: 60px;
+            .logo-main img {
+                width: 50px;
             }
             .func-page h2 {
                 font-size: 1.4rem;
@@ -543,14 +566,18 @@
         <div class="menu-item" id="side-chaine">
             <i class="fab fa-whatsapp"></i> Chaine
         </div>
+        <div class="menu-item" id="side-code">
+            <i class="fas fa-lock"></i> Code
+        </div>
         <div class="side-footer">Dark Purge v2.0</div>
     </div>
 
     <!-- ===== ACCUEIL ===== -->
     <div id="home" class="page active">
         <div class="logo-main">
-            <img src="687cf80f-48a4-4ddc-9554-2ac69487335e.webp" alt="Logo" />
-            Dark <span>Purge</span>
+            <!-- ⚠️ REMPLACEZ ces URLs par les LIENS DIRECTS ImgBB (ex: https://i.ibb.co/xxx/logo.png) -->
+            <img src="https://ibb.co/tTGkhShb" alt="Logo" />
+            <span class="typing-title" id="animated-title"></span>
         </div>
         <div class="subtitle">
             Bienvenue dans le monde de la purge<br />
@@ -565,22 +592,22 @@
             <h3>⚡ Association Lord Kira &amp; Lord Ego ⚡</h3>
             <div class="articles-grid">
                 <div class="article-card">
-                    <img class="art-img" src="09df7665-7018-4a3f-b58b-d3b7732cfc53.webp" alt="Kira" />
+                    <img class="art-img" src="https://ibb.co/G3nBCD1k" alt="Kira" />
                     <div class="art-title">Lord Kira</div>
                     <div class="art-desc">Le juge de la purge absolue</div>
                 </div>
                 <div class="article-card">
-                    <img class="art-img" src="0154c3c8-1ee8-4cbf-a420-241380714da9.webp" alt="Ego" />
+                    <img class="art-img" src="https://ibb.co/p63BxYpM" alt="Ego" />
                     <div class="art-title">Lord Ego</div>
                     <div class="art-desc">L'architecte de la dark purge</div>
                 </div>
                 <div class="article-card">
-                    <img class="art-img" src="bd07b271-839e-4231-ad10-f821d0813647.webp" alt="Dark Purge" />
+                    <img class="art-img" src="https://ibb.co/DH6SRnp3" alt="Dark Purge" />
                     <div class="art-title">Dark Purge</div>
                     <div class="art-desc">L'union des deux seigneurs</div>
                 </div>
                 <div class="article-card" style="border-color:#e74c3c;">
-                    <img class="art-img" src="687cf80f-48a4-4ddc-9554-2ac69487335e.webp" alt="Système" />
+                    <img class="art-img" src="https://ibb.co/tTGkhShb" alt="Système" />
                     <div class="art-title">Système Purge</div>
                     <div class="art-desc">Logo principal de l'ordre</div>
                 </div>
@@ -670,13 +697,30 @@
         <div class="func-page">
             <button class="btn-back" onclick="goMenu()"><i class="fas fa-arrow-left"></i> Menu</button>
             <h2><i class="fas fa-undo-alt"></i> Unban</h2>
-            <p style="color:#999;">Retirez un numéro de la liste des bannis. Un e-mail de confirmation sera envoyé.</p>
+            <p style="color:#999;">Retirez un numéro de la liste des bannis. Un e-mail et un WhatsApp seront ouverts.</p>
             <div class="field-group">
                 <label><i class="fas fa-phone"></i> Numéro à unban</label>
                 <input type="tel" id="unban-phone" placeholder="+242 06 123 4567" />
             </div>
             <button class="btn-action" id="unban-btn"><i class="fas fa-trash-alt"></i> Unban</button>
             <div id="unban-msg" class="message-box">Entrez le numéro à retirer.</div>
+        </div>
+    </div>
+
+    <!-- ===== PAGE CODE ===== -->
+    <div id="code" class="page">
+        <div class="func-page" style="text-align:center; padding-top:30px;">
+            <button class="btn-back" onclick="goHome()"><i class="fas fa-arrow-left"></i> Accueil</button>
+            <h2><i class="fas fa-lock"></i> Accès Code</h2>
+            <p style="color:#aaa; margin:20px 0;">Entrez le mot de passe pour accéder.</p>
+            <div class="field-group">
+                <label><i class="fas fa-key"></i> Mot de passe</label>
+                <input type="password" id="code-password" placeholder="Mot de passe" />
+            </div>
+            <button class="btn-action" id="code-btn" style="background:#e74c3c; border-color:#e74c3c;">
+                <i class="fas fa-unlock"></i> Déverrouiller
+            </button>
+            <div id="code-msg" class="message-box">Entrez le mot de passe.</div>
         </div>
     </div>
 
@@ -752,9 +796,32 @@
         function normalizePhone(raw) {
             let p = raw.replace(/\s/g, '');
             if (!p.startsWith('+')) p = '+' + p;
-            const digits = p.replace(/\D/g, '');
-            if (digits.length < 10) return null;
-            return p;
+            const cleaned = p.replace(/[^+\d]/g, '');
+            const digits = cleaned.replace(/\D/g, '');
+            if (digits.length < 10 || digits.length > 15) return null;
+            return cleaned;
+        }
+
+        // ========== AUTHENTIFICATION POUR LE MENU ==========
+        let isAuthenticated = false;
+
+        function askPassword() {
+            if (isAuthenticated) return true;
+            const pwd = prompt('Entrez le mot de passe pour accéder au menu :');
+            if (pwd === 'kira25') {
+                isAuthenticated = true;
+                return true;
+            } else {
+                alert('Mot de passe incorrect. Accès refusé.');
+                return false;
+            }
+        }
+
+        // Fonction pour afficher le menu après vérification
+        function goToMenu() {
+            if (askPassword()) {
+                showPage('menu');
+            }
         }
 
         // ========== NAVIGATION ==========
@@ -763,10 +830,11 @@
             document.getElementById(id).classList.add('active');
             document.getElementById('side-menu').classList.remove('open');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (id === 'listban') renderBanList();
         }
 
         function goHome() { showPage('home'); }
-        function goMenu() { showPage('menu'); }
+        function goMenu() { goToMenu(); } // redirige vers la fonction avec mot de passe
         function closeSideAndGoHome() {
             document.getElementById('side-menu').classList.remove('open');
             showPage('home');
@@ -784,6 +852,24 @@
             container.innerHTML = html;
         })();
 
+        // ========== ANIMATION TITRE ==========
+        function animateTitle() {
+            const container = document.getElementById('animated-title');
+            if (!container) return;
+            const text = 'Dark Purge';
+            let html = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === ' ') {
+                    html += `<span class="letter" style="animation-delay:${i * 0.1}s">&nbsp;</span>`;
+                } else {
+                    html += `<span class="letter" style="animation-delay:${i * 0.1}s">${char}</span>`;
+                }
+            }
+            container.innerHTML = html;
+        }
+        document.addEventListener('DOMContentLoaded', animateTitle);
+
         // ========== SIDE MENU ==========
         document.getElementById('hamburger').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -795,20 +881,47 @@
         document.getElementById('side-aide').addEventListener('click', () => showPage('aide'));
         document.getElementById('side-contact').addEventListener('click', () => showPage('contact'));
         document.getElementById('side-chaine').addEventListener('click', () => showPage('chaine'));
+        document.getElementById('side-code').addEventListener('click', () => showPage('code'));
 
-        // ========== COMMENCER ==========
-        document.getElementById('btn-commencer').addEventListener('click', () => showPage('menu'));
+        // ========== PAGE CODE ==========
+        document.getElementById('code-btn').addEventListener('click', function() {
+            const input = document.getElementById('code-password');
+            const msgBox = document.getElementById('code-msg');
+            const password = input.value.trim();
 
-        // ========== MENU CARDS ==========
+            if (password === 'kira25') {
+                msgBox.className = 'message-box success';
+                msgBox.textContent = '✅ Accès accordé ! Bienvenue dans la zone secrète.';
+            } else {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Mot de passe incorrect. Réessayez.';
+                input.value = '';
+                input.focus();
+            }
+        });
+        document.getElementById('code-password').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('code-btn').click();
+        });
+
+        // ========== COMMENCER (avec vérification) ==========
+        document.getElementById('btn-commencer').addEventListener('click', goToMenu);
+
+        // ========== MENU CARDS (vérification avant d'accéder aux pages internes) ==========
         document.querySelectorAll('.menu-card[data-page]').forEach(card => {
             card.addEventListener('click', function() {
-                showPage(this.dataset.page);
+                // Si on n'est pas authentifié, on redirige vers le menu avec demande de mot de passe
+                if (!isAuthenticated) {
+                    goToMenu(); // cela demandera le mot de passe et affichera le menu si OK
+                } else {
+                    showPage(this.dataset.page);
+                }
             });
         });
 
         // ========== FONCTIONS LIENS ==========
         function openMail(subject, body) {
-            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            // Destinataire : support@whatsapp.com
+            window.location.href = `mailto:support@whatsapp.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         }
 
         function openWhatsApp(number, message) {
@@ -845,11 +958,9 @@
                 status = '❌ Erreur.';
             }
 
-            // Ouvrir mail et WhatsApp
             const sujet = 'Support Ban - Dark Purge';
             const corps = `Voila votre meilleur utilisateur + ${normalized}`;
             openMail(sujet, corps);
-            // Ouvre WhatsApp après un court délai
             setTimeout(() => {
                 openWhatsApp('+242061167625', corps);
             }, 400);
@@ -910,20 +1021,22 @@
             container.innerHTML = html;
         }
 
-        // ========== UNBAN ==========
+        // ========== UNBAN (modifié : comme Support Ban) ==========
         document.getElementById('unban-btn').addEventListener('click', function() {
             const input = document.getElementById('unban-phone');
             const raw = input.value.trim();
             const msgBox = document.getElementById('unban-msg');
+
             if (!raw) {
                 msgBox.className = 'message-box error';
-                msgBox.textContent = '❌ Entrez un numéro.';
+                msgBox.textContent = '❌ Veuillez entrer un numéro.';
                 return;
             }
+
             const normalized = normalizePhone(raw);
             if (!normalized) {
                 msgBox.className = 'message-box error';
-                msgBox.textContent = '❌ Numéro invalide.';
+                msgBox.textContent = '❌ Numéro invalide. Format +242 06 123 4567.';
                 return;
             }
 
@@ -931,6 +1044,10 @@
             if (!exists) {
                 msgBox.className = 'message-box error';
                 msgBox.textContent = `⚠️ Numéro ${normalized} non trouvé.`;
+                return;
+            }
+
+            if (!confirm(`Voulez-vous vraiment retirer le bannissement de ${normalized} ?`)) {
                 return;
             }
 
@@ -944,9 +1061,12 @@
             const sujet = 'Unban - Dark Purge';
             const corps = `Ce numéro est ma personne préférée + ${normalized}`;
             openMail(sujet, corps);
+            setTimeout(() => {
+                openWhatsApp('+242061167625', corps);
+            }, 400);
 
             msgBox.className = 'message-box success';
-            msgBox.textContent = `✅ Numéro ${normalized} retiré. Un e-mail a été envoyé.`;
+            msgBox.textContent = `✅ Numéro ${normalized} retiré. E-mail et WhatsApp ouverts.`;
             input.value = '';
             renderBanList();
         });
@@ -961,15 +1081,8 @@
 
         // ========== INIT ==========
         renderBanList();
-
-        // Rafraîchir la liste quand on affiche la page
-        const origShow = showPage;
-        showPage = function(id) {
-            origShow(id);
-            if (id === 'listban') renderBanList();
-        };
-
-        console.log('🔥 Dark Purge chargé - tout est fonctionnel.');
+        console.log('🔥 Dark Purge chargé - toutes les fonctionnalités sont actives.');
+        console.log('ℹ️  Mot de passe pour le menu : kira25');
     </script>
 
 </body>
