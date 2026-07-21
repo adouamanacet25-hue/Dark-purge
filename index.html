@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dark Purge</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        #bg-purge {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            justify-content: center;
+            gap: 10px 20px;
+            padding: 20px;
+            opacity: 0.07;
+        }
+        #bg-purge span {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ff1a1a;
+            text-transform: uppercase;
+            transform: rotate(-12deg) scale(1.2);
+            display: inline-block;
+            white-space: nowrap;
+            letter-spacing: 8px;
+            font-family: 'Orbitron', 'Impact', sans-serif;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c0392b;
+            border-radius: 6px;
+        }
+        .page {
+            display: none;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 20px 16px 100px;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .btn-back {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 1.6rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-back:hover {
+            color: #fff;
+            transform: scale(1.05);
+        }
+        #hamburger {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1000;
+            background: rgba(20, 20, 30, 0.85);
+            border: 1px solid #c0392b;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 1.8rem;
+            color: #e74c3c;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: 0.2s;
+            box-shadow: 0 0 20px rgba(192, 57, 43, 0.2);
+        }
+        #hamburger:hover {
+            background: #c0392b;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        #side-menu {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.97);
+            border-right: 2px solid #c0392b;
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            padding: 30px 20px;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 4px 0 40px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        #side-menu.open {
+            left: 0;
+        }
+        #side-menu .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        #side-menu .close-btn:hover {
+            color: #fff;
+        }
+        #side-menu .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #ddd;
+            font-size: 1.3rem;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-left: 3px solid transparent;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        #side-menu .menu-item:hover {
+            background: rgba(192, 57, 43, 0.15);
+            border-left-color: #e74c3c;
+            color: #fff;
+        }
+        #side-menu .menu-item i {
+            width: 28px;
+            color: #e74c3c;
+        }
+        .side-footer {
+            margin-top: auto;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #222;
+            padding-top: 20px;
+        }
+        #home {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            z-index: 1;
+            padding: 20px;
+        }
+        #home .logo-main {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #e74c3c;
+            text-shadow: 0 0 30px rgba(231, 76, 60, 0.6);
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #home .logo-main img {
+            width: 80px;
+            height: auto;
+            margin-right: 10px;
+        }
+        #home .logo-main span {
+            color: #2e86de;
+        }
+        #home .subtitle {
+            font-size: 1.1rem;
+            color: #aaa;
+            max-width: 500px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid #2e86de33;
+        }
+        #home .creator {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        #home .creator strong {
+            color: #e74c3c;
+        }
+        .btn-start {
+            background: linear-gradient(145deg, #c0392b, #962d22);
+            border: none;
+            padding: 18px 60px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 40px rgba(192, 57, 43, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: 1px solid #e74c3c88;
+        }
+        .btn-start:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 60px rgba(192, 57, 43, 0.7);
+            background: #e74c3c;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        .menu-card {
+            background: rgba(20, 20, 30, 0.8);
+            backdrop-filter: blur(6px);
+            border: 1px solid #2e86de33;
+            border-radius: 20px;
+            padding: 24px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            color: #ddd;
+            text-decoration: none;
+        }
+        .menu-card:hover {
+            transform: translateY(-6px);
+            border-color: #e74c3c;
+            background: rgba(30, 30, 45, 0.9);
+            box-shadow: 0 12px 30px rgba(192, 57, 43, 0.2);
+        }
+        .menu-card i {
+            font-size: 2.4rem;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        .menu-card .label {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .menu-card .desc {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        .menu-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .menu-header h2 {
+            font-size: 2rem;
+            color: #e74c3c;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .menu-header p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .func-page {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .func-page h2 {
+            color: #e74c3c;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid #2e86de33;
+            padding-bottom: 12px;
+        }
+        .func-page h2 i {
+            color: #2e86de;
+        }
+        .func-page .field-group {
+            margin: 25px 0;
+        }
+        .func-page label {
+            display: block;
+            font-weight: 500;
+            color: #bbb;
+            margin-bottom: 6px;
+        }
+        .func-page input[type="tel"],
+        .func-page input[type="text"] {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid #333;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 1.1rem;
+            transition: 0.2s;
+            outline: none;
+        }
+        .func-page input:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 20px rgba(192, 57, 43, 0.15);
+        }
+        .func-page .btn-action {
+            background: linear-gradient(145deg, #2e86de, #1a5f9a);
+            border: none;
+            padding: 14px 30px;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.25s;
+            font-size: 1.1rem;
+            border: 1px solid #2e86de66;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .func-page .btn-action:hover {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            transform: scale(1.02);
+        }
+        .func-page .message-box {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid #2e86de;
+            color: #ccc;
+            font-size: 0.95rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .func-page .message-box.success {
+            border-left-color: #27ae60;
+            color: #8effb2;
+        }
+        .func-page .message-box.error {
+            border-left-color: #e74c3c;
+            color: #ff8a8a;
+        }
+        .func-page .message-box.info {
+            border-left-color: #f39c12;
+            color: #f5d76e;
+        }
+        .ban-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ban-item {
+            background: rgba(20, 20, 30, 0.7);
+            padding: 14px 18px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #e74c3c;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+        .ban-item .num {
+            font-weight: 600;
+            color: #fff;
+        }
+        .ban-item .date {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .ban-item .off {
+            color: #e74c3c;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        .empty-list {
+            color: #666;
+            text-align: center;
+            padding: 30px 0;
+            font-style: italic;
+        }
+        .articles-section {
+            margin-top: 60px;
+            padding: 20px 0;
+            border-top: 1px solid #2e86de22;
+        }
+        .articles-section h3 {
+            color: #e74c3c;
+            font-size: 1.4rem;
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .articles-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .article-card {
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 16px 20px 20px;
+            width: 200px;
+            text-align: center;
+            border: 1px solid #2e86de22;
+            transition: 0.2s;
+        }
+        .article-card:hover {
+            border-color: #e74c3c;
+            transform: scale(1.02);
+        }
+        .article-card .art-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .article-card .art-title {
+            font-weight: 700;
+            color: #eee;
+            font-size: 1rem;
+        }
+        .article-card .art-desc {
+            color: #999;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+        #aide .aide-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            text-align: center;
+        }
+        #aide .aide-container h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            color: #e74c3c;
+            text-shadow: 0 0 40px rgba(231, 76, 60, 0.3);
+            letter-spacing: 6px;
+        }
+        #aide .aide-container p {
+            color: #888;
+            font-size: 1.2rem;
+            margin-top: 40px;
+        }
+        #aide .aide-container p strong {
+            color: #e74c3c;
+        }
+        @media (max-width: 500px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            #home .logo-main {
+                font-size: 3rem;
+            }
+            #home .logo-main img {
+                width: 60px;
+            }
+            .func-page h2 {
+                font-size: 1.4rem;
+            }
+            .article-card {
+                width: 150px;
+            }
+            #side-menu {
+                width: 260px;
+                left: -280px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND -->
+    <div id="bg-purge"></div>
+
+    <!-- HAMBURGER -->
+    <button id="hamburger" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- SIDE MENU -->
+    <div id="side-menu">
+        <button class="close-btn" id="close-side"><i class="fas fa-times"></i></button>
+        <div class="menu-item" id="side-aide">
+            <i class="fas fa-question-circle"></i> Aide
+        </div>
+        <div class="menu-item" id="side-contact">
+            <i class="fas fa-phone"></i> Nous contacter
+        </div>
+        <div class="menu-item" id="side-chaine">
+            <i class="fab fa-whatsapp"></i> Chaine
+        </div>
+        <div class="side-footer">Dark Purge v2.0</div>
+    </div>
+
+    <!-- ===== ACCUEIL ===== -->
+    <div id="home" class="page active">
+        <div class="logo-main">
+            <img src="687cf80f-48a4-4ddc-9554-2ac69487335e.webp" alt="Logo" />
+            Dark <span>Purge</span>
+        </div>
+        <div class="subtitle">
+            Bienvenue dans le monde de la purge<br />
+            où celle et ceux expriment leur ban ou unban
+        </div>
+        <div class="creator">
+            Créateur : <strong>Lord Kira</strong> &amp; <strong>Lord Ego</strong>
+        </div>
+        <button class="btn-start" id="btn-commencer">⚔️ Commencer</button>
+
+        <div class="articles-section">
+            <h3>⚡ Association Lord Kira &amp; Lord Ego ⚡</h3>
+            <div class="articles-grid">
+                <div class="article-card">
+                    <img class="art-img" src="09df7665-7018-4a3f-b58b-d3b7732cfc53.webp" alt="Kira" />
+                    <div class="art-title">Lord Kira</div>
+                    <div class="art-desc">Le juge de la purge absolue</div>
+                </div>
+                <div class="article-card">
+                    <img class="art-img" src="0154c3c8-1ee8-4cbf-a420-241380714da9.webp" alt="Ego" />
+                    <div class="art-title">Lord Ego</div>
+                    <div class="art-desc">L'architecte de la dark purge</div>
+                </div>
+                <div class="article-card">
+                    <img class="art-img" src="bd07b271-839e-4231-ad10-f821d0813647.webp" alt="Dark Purge" />
+                    <div class="art-title">Dark Purge</div>
+                    <div class="art-desc">L'union des deux seigneurs</div>
+                </div>
+                <div class="article-card" style="border-color:#e74c3c;">
+                    <img class="art-img" src="687cf80f-48a4-4ddc-9554-2ac69487335e.webp" alt="Système" />
+                    <div class="art-title">Système Purge</div>
+                    <div class="art-desc">Logo principal de l'ordre</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MENU ===== -->
+    <div id="menu" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <button class="btn-back" onclick="goHome()"><i class="fas fa-arrow-left"></i> Accueil</button>
+            <span style="color:#666; font-size:0.8rem;">DARK PURGE</span>
+        </div>
+        <div class="menu-header">
+            <h2>╭─❖ 📛 SYSTÈME DE BAN</h2>
+            <p>│</p>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-card" data-page="support">
+                <i class="fas fa-tools"></i>
+                <div class="label">🛠️ Support Ban</div>
+                <div class="desc">Signaler un numéro</div>
+            </div>
+            <div class="menu-card" data-page="checkban">
+                <i class="fas fa-search"></i>
+                <div class="label">🔍 Check Ban</div>
+                <div class="desc">Vérifier un numéro</div>
+            </div>
+            <div class="menu-card" data-page="listban">
+                <i class="fas fa-list"></i>
+                <div class="label">📋 Liste des Bannis</div>
+                <div class="desc">Voir les bannis</div>
+            </div>
+            <div class="menu-card" data-page="unban">
+                <i class="fas fa-undo-alt"></i>
+                <div class="label">🚫 Unban</div>
+                <div class="desc">Retirer un bannissement</div>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top:20px; color:#555; font-size:0.8rem;">
+            ╰──────────────❖
+        </div>
+    </div>
+
+    <!-- ===== SUPPORT BAN ===== -->
+    <div id="support" class="page">
+        <div class="func-page">
+            <button class="btn-back" onclick="goMenu()"><i class="fas fa-arrow-left"></i> Menu</button>
+            <h2><i class="fas fa-tools"></i> Support Ban</h2>
+            <p style="color:#999;">Entrez le numéro à bannir. Un e-mail et une discussion WhatsApp seront ouverts.</p>
+            <div class="field-group">
+                <label><i class="fas fa-phone"></i> Numéro de téléphone</label>
+                <input type="tel" id="support-phone" placeholder="+242 06 123 4567" />
+            </div>
+            <button class="btn-action" id="support-send"><i class="fas fa-paper-plane"></i> Envoyer</button>
+            <div id="support-msg" class="message-box">Remplissez le champ ci-dessus.</div>
+        </div>
+    </div>
+
+    <!-- ===== CHECK BAN ===== -->
+    <div id="checkban" class="page">
+        <div class="func-page">
+            <button class="btn-back" onclick="goMenu()"><i class="fas fa-arrow-left"></i> Menu</button>
+            <h2><i class="fas fa-search"></i> Check Ban</h2>
+            <p style="color:#999;">Vérifiez si un numéro est actif sur WhatsApp (ouverture réelle).</p>
+            <div class="field-group">
+                <label><i class="fas fa-phone"></i> Numéro à vérifier</label>
+                <input type="tel" id="check-phone" placeholder="+242 06 123 4567" />
+            </div>
+            <button class="btn-action" id="check-btn"><i class="fas fa-check-circle"></i> Vérifier</button>
+            <div id="check-msg" class="message-box">Entrez un numéro pour vérifier.</div>
+        </div>
+    </div>
+
+    <!-- ===== LISTE BANNIS ===== -->
+    <div id="listban" class="page">
+        <div class="func-page">
+            <button class="btn-back" onclick="goMenu()"><i class="fas fa-arrow-left"></i> Menu</button>
+            <h2><i class="fas fa-list"></i> Liste des Bannis</h2>
+            <p style="color:#999;">Tous les numéros bannis avec leur date.</p>
+            <div id="ban-list-container" class="ban-list"></div>
+        </div>
+    </div>
+
+    <!-- ===== UNBAN ===== -->
+    <div id="unban" class="page">
+        <div class="func-page">
+            <button class="btn-back" onclick="goMenu()"><i class="fas fa-arrow-left"></i> Menu</button>
+            <h2><i class="fas fa-undo-alt"></i> Unban</h2>
+            <p style="color:#999;">Retirez un numéro de la liste des bannis. Un e-mail de confirmation sera envoyé.</p>
+            <div class="field-group">
+                <label><i class="fas fa-phone"></i> Numéro à unban</label>
+                <input type="tel" id="unban-phone" placeholder="+242 06 123 4567" />
+            </div>
+            <button class="btn-action" id="unban-btn"><i class="fas fa-trash-alt"></i> Unban</button>
+            <div id="unban-msg" class="message-box">Entrez le numéro à retirer.</div>
+        </div>
+    </div>
+
+    <!-- ===== AIDE ===== -->
+    <div id="aide" class="page">
+        <button class="btn-back" onclick="closeSideAndGoHome()"><i class="fas fa-arrow-left"></i> Retour</button>
+        <div class="aide-container">
+            <h1>Dark Purge</h1>
+            <p>
+                Ce site est créé par<br />
+                <strong>Lord Kira</strong> &amp; <strong>Lord Ego</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== CONTACT ===== -->
+    <div id="contact" class="page">
+        <div class="func-page" style="text-align:center; padding-top:60px;">
+            <button class="btn-back" onclick="closeSideAndGoHome()"><i class="fas fa-arrow-left"></i> Retour</button>
+            <h2 style="color:#e74c3c;"><i class="fab fa-whatsapp"></i> Nous contacter</h2>
+            <p style="color:#aaa; margin:20px 0;">Ouvrez une discussion WhatsApp avec le support.</p>
+            <button class="btn-action" id="contact-wa" style="background:#25D366; border-color:#25D366;">
+                <i class="fab fa-whatsapp"></i> Ouvrir WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== CHAINE ===== -->
+    <div id="chaine" class="page">
+        <div class="func-page" style="text-align:center; padding-top:60px;">
+            <button class="btn-back" onclick="closeSideAndGoHome()"><i class="fas fa-arrow-left"></i> Retour</button>
+            <h2 style="color:#e74c3c;"><i class="fas fa-link"></i> Chaine WhatsApp</h2>
+            <p style="color:#aaa; margin:20px 0;">Rejoignez notre chaîne officielle.</p>
+            <button class="btn-action" id="chaine-btn" style="background:#25D366; border-color:#25D366;">
+                <i class="fab fa-whatsapp"></i> Ouvrir la chaîne
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== SCRIPT ===== -->
+    <script>
+        // ========== STOCKAGE ==========
+        const STORAGE_KEY = 'dark_purge_bans';
+
+        function getBans() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+        }
+
+        function saveBans(bans) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(bans));
+        }
+
+        function addBan(phone) {
+            const bans = getBans();
+            const normalized = normalizePhone(phone);
+            if (!normalized) return { success: false, reason: 'format' };
+            if (bans.some(b => b.phone === normalized)) return { success: false, reason: 'exists' };
+            bans.push({ phone: normalized, date: new Date().toLocaleString('fr-FR') });
+            saveBans(bans);
+            return { success: true };
+        }
+
+        function removeBan(phone) {
+            const bans = getBans();
+            const normalized = normalizePhone(phone);
+            if (!normalized) return false;
+            const filtered = bans.filter(b => b.phone !== normalized);
+            if (filtered.length === bans.length) return false;
+            saveBans(filtered);
+            return true;
+        }
+
+        function normalizePhone(raw) {
+            let p = raw.replace(/\s/g, '');
+            if (!p.startsWith('+')) p = '+' + p;
+            const digits = p.replace(/\D/g, '');
+            if (digits.length < 10) return null;
+            return p;
+        }
+
+        // ========== NAVIGATION ==========
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('side-menu').classList.remove('open');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goHome() { showPage('home'); }
+        function goMenu() { showPage('menu'); }
+        function closeSideAndGoHome() {
+            document.getElementById('side-menu').classList.remove('open');
+            showPage('home');
+        }
+
+        // ========== BACKGROUND ==========
+        (function() {
+            const container = document.getElementById('bg-purge');
+            const words = ['PURGE', 'BAN', 'KIRA', 'EGO', 'DARK', 'OFF', 'SYSTEM'];
+            let html = '';
+            for (let i = 0; i < 60; i++) {
+                const word = words[Math.floor(Math.random() * words.length)];
+                html += `<span>${word}</span>`;
+            }
+            container.innerHTML = html;
+        })();
+
+        // ========== SIDE MENU ==========
+        document.getElementById('hamburger').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('side-menu').classList.toggle('open');
+        });
+        document.getElementById('close-side').addEventListener('click', function() {
+            document.getElementById('side-menu').classList.remove('open');
+        });
+        document.getElementById('side-aide').addEventListener('click', () => showPage('aide'));
+        document.getElementById('side-contact').addEventListener('click', () => showPage('contact'));
+        document.getElementById('side-chaine').addEventListener('click', () => showPage('chaine'));
+
+        // ========== COMMENCER ==========
+        document.getElementById('btn-commencer').addEventListener('click', () => showPage('menu'));
+
+        // ========== MENU CARDS ==========
+        document.querySelectorAll('.menu-card[data-page]').forEach(card => {
+            card.addEventListener('click', function() {
+                showPage(this.dataset.page);
+            });
+        });
+
+        // ========== FONCTIONS LIENS ==========
+        function openMail(subject, body) {
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        }
+
+        function openWhatsApp(number, message) {
+            const clean = number.replace(/\D/g, '');
+            let url = `https://wa.me/${clean}`;
+            if (message) url += `?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // ========== SUPPORT BAN ==========
+        document.getElementById('support-send').addEventListener('click', function() {
+            const input = document.getElementById('support-phone');
+            const raw = input.value.trim();
+            const msgBox = document.getElementById('support-msg');
+            if (!raw) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Veuillez entrer un numéro.';
+                return;
+            }
+            const normalized = normalizePhone(raw);
+            if (!normalized) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Numéro invalide. Format +242 06 123 4567.';
+                return;
+            }
+
+            const result = addBan(normalized);
+            let status = '';
+            if (result.success) {
+                status = `✅ Numéro ${normalized} ajouté à la liste.`;
+            } else if (result.reason === 'exists') {
+                status = `⚠️ Numéro ${normalized} déjà banni. Demande renvoyée.`;
+            } else {
+                status = '❌ Erreur.';
+            }
+
+            // Ouvrir mail et WhatsApp
+            const sujet = 'Support Ban - Dark Purge';
+            const corps = `Voila votre meilleur utilisateur + ${normalized}`;
+            openMail(sujet, corps);
+            // Ouvre WhatsApp après un court délai
+            setTimeout(() => {
+                openWhatsApp('+242061167625', corps);
+            }, 400);
+
+            msgBox.className = (result.success) ? 'message-box success' : 'message-box info';
+            msgBox.textContent = status + ' E-mail et WhatsApp ouverts.';
+            if (result.success) {
+                input.value = '';
+                renderBanList();
+            }
+        });
+
+        // ========== CHECK BAN ==========
+        document.getElementById('check-btn').addEventListener('click', function() {
+            const input = document.getElementById('check-phone');
+            const raw = input.value.trim();
+            const msgBox = document.getElementById('check-msg');
+            if (!raw) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Entrez un numéro.';
+                return;
+            }
+            const normalized = normalizePhone(raw);
+            if (!normalized) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Numéro invalide.';
+                return;
+            }
+
+            openWhatsApp(normalized);
+
+            const bans = getBans();
+            const isBanned = bans.some(b => b.phone === normalized);
+            const status = isBanned ?
+                '❌ Ce numéro est banni dans notre système (liste locale).' :
+                '✅ Numéro disponible pour une conversation WhatsApp.';
+            msgBox.className = isBanned ? 'message-box error' : 'message-box success';
+            msgBox.textContent = `🔍 Vérification : ${normalized}\n${status}`;
+        });
+
+        // ========== LISTE BANNIS ==========
+        function renderBanList() {
+            const container = document.getElementById('ban-list-container');
+            const bans = getBans();
+            if (bans.length === 0) {
+                container.innerHTML = `<div class="empty-list">Aucun banni détecté.</div>`;
+                return;
+            }
+            let html = '';
+            bans.forEach(b => {
+                html += `
+                    <div class="ban-item">
+                        <div><span class="off">📵</span><span class="num">${b.phone}</span></div>
+                        <div class="date">${b.date}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ========== UNBAN ==========
+        document.getElementById('unban-btn').addEventListener('click', function() {
+            const input = document.getElementById('unban-phone');
+            const raw = input.value.trim();
+            const msgBox = document.getElementById('unban-msg');
+            if (!raw) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Entrez un numéro.';
+                return;
+            }
+            const normalized = normalizePhone(raw);
+            if (!normalized) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Numéro invalide.';
+                return;
+            }
+
+            const exists = getBans().some(b => b.phone === normalized);
+            if (!exists) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = `⚠️ Numéro ${normalized} non trouvé.`;
+                return;
+            }
+
+            const removed = removeBan(normalized);
+            if (!removed) {
+                msgBox.className = 'message-box error';
+                msgBox.textContent = '❌ Erreur lors du retrait.';
+                return;
+            }
+
+            const sujet = 'Unban - Dark Purge';
+            const corps = `Ce numéro est ma personne préférée + ${normalized}`;
+            openMail(sujet, corps);
+
+            msgBox.className = 'message-box success';
+            msgBox.textContent = `✅ Numéro ${normalized} retiré. Un e-mail a été envoyé.`;
+            input.value = '';
+            renderBanList();
+        });
+
+        // ========== CONTACT & CHAINE ==========
+        document.getElementById('contact-wa').addEventListener('click', function() {
+            openWhatsApp('+242061167625');
+        });
+        document.getElementById('chaine-btn').addEventListener('click', function() {
+            window.open('https://whatsapp.com/channel/0029Vb7WJzp84OmBD0fEEJ2X', '_blank');
+        });
+
+        // ========== INIT ==========
+        renderBanList();
+
+        // Rafraîchir la liste quand on affiche la page
+        const origShow = showPage;
+        showPage = function(id) {
+            origShow(id);
+            if (id === 'listban') renderBanList();
+        };
+
+        console.log('🔥 Dark Purge chargé - tout est fonctionnel.');
+    </script>
+
+</body>
+</html>
