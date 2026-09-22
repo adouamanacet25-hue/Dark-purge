@@ -1,1104 +1,151 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dark Purge System</title>
-    <style>
-        /* ----- RESET & BASE ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        body {
-            background: #1a1a1a;
-            color: #e0e0e0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #222;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cc3333;
-            border-radius: 4px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dark Purge System · Kira × Ego</title>
+<style>
+/* ============================================================
+   BASE
+============================================================ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --red:#ff2b2b;
+  --red-soft:#ff7070;
+  --red-deep:#7a0000;
+  --bg:#050505;
+  --txt:#f3eaea;
+}
+html,body{height:100%;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:#050505;
+  color:var(--txt);
+  overflow-x:hidden;
+}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:#0c0c0c;}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#ff2b2b,#4a0000);border-radius:9px;}
 
-        /* ----- CONTAINER ----- */
-        .container {
-            width: 100%;
-            max-width: 1100px;
-            background: #1f1f1f;
-            border-radius: 16px;
-            padding: 20px 24px 16px;
-            box-shadow: 0 0 60px rgba(200, 50, 50, 0.15);
-            border: 1px solid #444;
-            position: relative;
-            min-height: 500px;
-            transition: all 0.3s;
-            /* LED glow effect on container */;
-        }
-        .container::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 18px;
-            background: linear-gradient(45deg, #ff3333, #333, #ff3333, #333);
-            background-size: 300% 300%;
-            z-index: -1;
-            animation: ledBorder 4s ease infinite;
-            opacity: 0.6;
-        }
-        @keyframes ledBorder {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
+/* ============================================================
+   ECRANS
+============================================================ */
+.screen{
+  position:fixed;
+  inset:0;
+  display:none;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  z-index:1;
+}
+.screen.active{display:block;animation:screenIn .55s cubic-bezier(.22,1,.36,1);}
+@keyframes screenIn{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
 
-        /* LED dots */
-        .led-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ff3333;
-            box-shadow: 0 0 12px #ff3333, 0 0 24px #ff3333;
-            animation: ledPulse 2s ease-in-out infinite;
-            margin: 0 4px;
-        }
-        @keyframes ledPulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
-        }
+.screen-bg{
+  position:fixed;inset:0;
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+  z-index:0;
+  filter:saturate(115%);
+}
+.screen-veil{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(255,40,40,.22), transparent 55%),
+    radial-gradient(circle at 50% 110%, rgba(255,0,0,.12), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.80) 0%, rgba(8,0,0,.90) 55%, rgba(0,0,0,.95) 100%);
+}
+.screen-veil.pale{
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255,40,40,.14), transparent 60%),
+    linear-gradient(180deg, rgba(0,0,0,.72), rgba(6,0,0,.86));
+}
+.screen-inner{
+  position:relative;z-index:2;
+  min-height:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:28px 16px 44px;
+}
+.screen-inner.top{justify-content:flex-start;}
 
-        /* ----- LOGIN / REGISTER ----- */
-        #loginPage {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        #mainPage {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* ============================================================
+   CRISTAL IPHONE
+============================================================ */
+.crystal{
+  position:relative;
+  border-radius:30px;
+  background:
+    linear-gradient(150deg, rgba(255,255,255,.09) 0%, rgba(255,50,50,.06) 30%, rgba(0,0,0,.42) 100%);
+  backdrop-filter:blur(26px) saturate(180%);
+  -webkit-backdrop-filter:blur(26px) saturate(180%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.8),
+    0 0 46px rgba(255,40,40,.12),
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 0 rgba(255,40,40,.18);
+  overflow:hidden;
+}
+.crystal::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.13) 47%,transparent 62%);
+  background-size:280% 280%;
+  animation:crystalShine 7.5s ease-in-out infinite;
+}
+@keyframes crystalShine{
+  0%{background-position:130% 0;}
+  50%{background-position:-30% 0;}
+  100%{background-position:130% 0;}
+}
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-        .login-header h1 {
-            font-size: 2.6rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: #ff4d4d;
-            text-shadow: 0 0 30px rgba(255, 50, 50, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        .login-header h1 .led-dot {
-            width: 14px;
-            height: 14px;
-            background: #ff4d4d;
-            box-shadow: 0 0 20px #ff4d4d;
-        }
-        .login-header p {
-            color: #999;
-            font-size: 0.85rem;
-            letter-spacing: 4px;
-            margin-top: 4px;
-        }
+/* ============================================================
+   LED / POINTS
+============================================================ */
+.led-dot{
+  display:inline-block;width:10px;height:10px;border-radius:50%;
+  background:var(--red);
+  box-shadow:0 0 10px var(--red),0 0 22px var(--red);
+  animation:ledPulse 2s ease-in-out infinite;
+}
+@keyframes ledPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.78);}}
+.status-dot{
+  display:inline-block;width:9px;height:9px;border-radius:50%;
+  background:#2ee02e;box-shadow:0 0 12px #2ee02e;
+  animation:ledPulse 1.8s ease-in-out infinite;
+}
 
-        .login-form {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #262626;
-            padding: 28px 24px;
-            border-radius: 12px;
-            border: 1px solid #444;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-        }
-        .login-form .tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid #444;
-        }
-        .login-form .tabs button {
-            flex: 1;
-            padding: 10px 0;
-            background: #1a1a1a;
-            border: none;
-            color: #888;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            letter-spacing: 1px;
-        }
-        .login-form .tabs button.active {
-            background: #2a0a0a;
-            color: #ff4d4d;
-            box-shadow: inset 0 -2px 0 #ff3333;
-        }
-        .login-form .tabs button:hover {
-            color: #ff6666;
-        }
-        .login-form .field {
-            margin-bottom: 16px;
-        }
-        .login-form .field label {
-            display: block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #aaa;
-            margin-bottom: 4px;
-        }
-        .login-form .field input,
-        .login-form .field .file-upload {
-            width: 100%;
-            padding: 10px 14px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 6px;
-            color: #eee;
-            font-size: 0.95rem;
-            outline: none;
-            transition: 0.3s;
-        }
-        .login-form .field input:focus {
-            border-color: #ff3333;
-            box-shadow: 0 0 20px rgba(255, 50, 50, 0.1);
-        }
-        .login-form .field .file-upload {
-            padding: 6px 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #aaa;
-        }
-        .login-form .field .file-upload:hover {
-            border-color: #ff3333;
-        }
-        .login-form .field .file-upload input[type="file"] {
-            display: none;
-        }
-        .profile-preview {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: 2px solid #555;
-            object-fit: cover;
-            background: #1a1a1a;
-            flex-shrink: 0;
-            transition: 0.3s;
-        }
-        .profile-preview:hover {
-            border-color: #ff3333;
-        }
+/* ============================================================
+   BIENVENUE
+============================================================ */
+.welcome-card{
+  width:100%;max-width:520px;
+  padding:44px 26px 38px;
+  text-align:center;
+}
+.led-row{display:flex;justify-content:center;gap:10px;margin-bottom:22px;}
+.led-row .led-dot:nth-child(2){animation-delay:.3s;}
+.led-row .led-dot:nth-child(3){animation-delay:.6s;}
+.led-row .led-dot:nth-child(4){animation-delay:.9s;}
+.led-row .led-dot:nth-child(5){animation-delay:1.2s;}
 
-        .connected-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 10px 16px;
-            margin-top: 10px;
-        }
-        .connected-box .count {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: #aaa;
-        }
-        .connected-box .count span {
-            color: #ff4d4d;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-        .status-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #33cc33;
-            box-shadow: 0 0 12px #33cc33;
-            animation: dotPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes dotPulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.3;
-                transform: scale(0.8);
-            }
-        }
-        .blink-btn {
-            background: #2a0a0a;
-            border: 1px solid #ff3333;
-            color: #ff4d4d;
-            padding: 4px 18px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-transform: uppercase;
-            animation: blink 1.6s ease-in-out infinite;
-            transition: 0.3s;
-            box-shadow: 0 0 10px rgba(255, 50, 50, 0.2);
-        }
-        .blink-btn:hover {
-            background: #330d0d;
-            box-shadow: 0 0 30px rgba(255, 50, 50, 0.4);
-        }
-        @keyframes blink {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.2;
-            }
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: #2a0a0a;
-            border: 1px solid #ff3333;
-            border-radius: 6px;
-            color: #ff4d4d;
-            font-size: 0.95rem;
-            font-weight: 600;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 6px;
-            box-shadow: 0 0 20px rgba(255, 50, 50, 0.1);
-        }
-        .login-btn:hover {
-            background: #330d0d;
-            box-shadow: 0 0 40px rgba(255, 50, 50, 0.25);
-        }
-        .code-display {
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 10px 14px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            letter-spacing: 4px;
-            color: #ff4d4d;
-            text-align: center;
-            margin: 4px 0 12px;
-        }
-        .code-display small {
-            display: block;
-            font-size: 0.6rem;
-            color: #777;
-            letter-spacing: 2px;
-            margin-top: 2px;
-        }
-        .hidden {
-            display: none !important;
-        }
-
-        /* ----- MAIN PAGE HEADER ----- */
-        .main-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #444;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-            position: relative;
-        }
-        .main-header .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .main-header .brand h2 {
-            font-weight: 300;
-            font-size: 1.6rem;
-            letter-spacing: 5px;
-            color: #ff4d4d;
-            text-shadow: 0 0 20px rgba(255, 50, 50, 0.2);
-        }
-        .main-header .brand .led-dot {
-            width: 12px;
-            height: 12px;
-            background: #ff4d4d;
-            box-shadow: 0 0 20px #ff4d4d;
-        }
-
-        .main-header .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #262626;
-            padding: 4px 16px 4px 4px;
-            border-radius: 30px;
-            border: 1px solid #555;
-            box-shadow: 0 0 20px rgba(255, 50, 50, 0.05);
-        }
-        .main-header .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #555;
-            object-fit: cover;
-            background: #1a1a1a;
-        }
-        .main-header .user-profile .info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-        .main-header .user-profile .info .pseudo {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #eee;
-        }
-        .main-header .user-profile .info .code {
-            font-size: 0.65rem;
-            color: #888;
-            letter-spacing: 1px;
-        }
-        .main-header .menu-btn {
-            background: none;
-            border: 2px solid #666;
-            color: #ccc;
-            font-size: 1.8rem;
-            padding: 0 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            line-height: 1.4;
-            font-weight: 300;
-        }
-        .main-header .menu-btn:hover {
-            border-color: #ff3333;
-            color: #ff4d4d;
-            box-shadow: 0 0 25px rgba(255, 50, 50, 0.2);
-        }
-
-        /* ----- MAIN LAYOUT ----- */
-        .main-layout {
-            display: flex;
-            gap: 24px;
-            position: relative;
-        }
-        .main-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        /* ----- ARTICLES AVEC IMAGES ----- */
-        .article {
-            background: #262626;
-            border: 1px solid #444;
-            border-radius: 12px;
-            padding: 18px 22px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transition: 0.3s;
-        }
-        .article:hover {
-            border-color: #ff3333;
-            box-shadow: 0 0 30px rgba(255, 50, 50, 0.08);
-        }
-        .article img {
-            width: 100%;
-            max-height: 220px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            border: 1px solid #555;
-            display: block;
-        }
-        .article h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #ff4d4d;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .article h3 .icon {
-            font-size: 1.4rem;
-        }
-        .article p {
-            color: #bbb;
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-        .article p strong {
-            color: #ff6666;
-        }
-        .article .meta {
-            display: inline-block;
-            background: #1a0a0a;
-            border: 1px solid #553333;
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            color: #ff6666;
-            letter-spacing: 1px;
-            margin-top: 8px;
-            box-shadow: 0 0 10px rgba(255, 50, 50, 0.1);
-        }
-
-        /* ----- SIDE PANEL (demi-page) ----- */
-        .side-panel {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 50%;
-            max-width: 440px;
-            height: 100%;
-            background: #1f1f1f;
-            border-left: 2px solid #ff3333;
-            box-shadow: -8px 0 60px rgba(0, 0, 0, 0.7);
-            transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-            z-index: 1000;
-            padding: 28px 24px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .side-panel.open {
-            transform: translateX(0);
-        }
-        .side-panel .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #444;
-            padding-bottom: 14px;
-            margin-bottom: 20px;
-        }
-        .side-panel .panel-header h3 {
-            font-weight: 300;
-            letter-spacing: 4px;
-            color: #ff4d4d;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .side-panel .panel-header .close-panel {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: 0.3s;
-            line-height: 1;
-        }
-        .side-panel .panel-header .close-panel:hover {
-            color: #ff4d4d;
-            transform: rotate(90deg);
-        }
-        .side-panel .tool-item {
-            padding: 14px 0;
-            border-bottom: 1px solid #333;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .side-panel .tool-item .label {
-            font-weight: 500;
-            color: #ddd;
-            font-size: 1rem;
-        }
-        .side-panel .tool-item .action {
-            color: #aaa;
-            font-size: 0.85rem;
-            word-break: break-all;
-            text-align: right;
-            max-width: 60%;
-        }
-        .side-panel .tool-item .action a {
-            color: #ff4d4d;
-            text-decoration: none;
-            border-bottom: 1px dashed #553333;
-            transition: 0.3s;
-        }
-        .side-panel .tool-item .action a:hover {
-            color: #ff8888;
-            border-color: #ff8888;
-        }
-        .side-panel .tool-item .badge {
-            background: #2a0a0a;
-            color: #ff4d4d;
-            padding: 2px 14px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            border: 1px solid #553333;
-        }
-        .side-panel .tool-item .offline {
-            color: #666;
-        }
-        .side-panel .panel-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: #888;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        /* overlay */
-        .panel-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(4px);
-        }
-        .panel-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* ----- FOOTER ----- */
-        .main-footer {
-            text-align: center;
-            padding: 18px 0 4px;
-            border-top: 2px solid #333;
-            margin-top: 10px;
-            color: #666;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        .main-footer strong {
-            color: #cc4444;
-        }
-
-        /* ----- RESPONSIVE ----- */
-        @media (max-width: 700px) {
-            .side-panel {
-                width: 80%;
-                max-width: 340px;
-            }
-            .container {
-                padding: 12px 14px;
-            }
-            .main-header .brand h2 {
-                font-size: 1.3rem;
-            }
-            .main-header .user-profile .info .pseudo {
-                font-size: 0.85rem;
-            }
-            .login-header h1 {
-                font-size: 2rem;
-            }
-            .login-form {
-                padding: 20px 16px;
-            }
-            .article {
-                padding: 14px 16px;
-            }
-            .article img {
-                max-height: 160px;
-            }
-        }
-        @media (max-width: 500px) {
-            .side-panel {
-                width: 90%;
-            }
-            .main-header .user-profile .info .code {
-                display: none;
-            }
-            .main-header .user-profile {
-                padding-right: 8px;
-            }
-            .login-header h1 {
-                font-size: 1.6rem;
-                letter-spacing: 4px;
-            }
-        }
-
-        .mt-8 {
-            margin-top: 8px;
-        }
-        .mt-16 {
-            margin-top: 16px;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .flex-center {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-
-        <!-- ========================================================== -->
-        <!-- LOGIN / REGISTER -->
-        <!-- ========================================================== -->
-        <div id="loginPage">
-            <div class="login-header">
-                <h1>
-                    <span class="led-dot"></span>
-                    DARK PURGE
-                    <span class="led-dot"></span>
-                </h1>
-                <p>📵 SYSTEM · KIRA · EGO 📵</p>
-            </div>
-
-            <div class="login-form">
-                <div class="tabs">
-                    <button id="tabLogin" class="active" onclick="switchTab('login')">SE CONNECTER</button>
-                    <button id="tabRegister" onclick="switchTab('register')">S'INSCRIRE</button>
-                </div>
-
-                <!-- Connexion -->
-                <div id="formLogin">
-                    <div class="field">
-                        <label>👤 Pseudo</label>
-                        <input type="text" id="loginPseudo" placeholder="Votre pseudo" />
-                    </div>
-                    <div class="field">
-                        <label>🔑 Code</label>
-                        <input type="password" id="loginCode" placeholder="Code d'accès" />
-                    </div>
-                    <button class="login-btn" onclick="handleLogin()">➤ ENTRER</button>
-                    <div class="connected-box mt-16">
-                        <div class="count"><span class="status-dot"></span> Connectés : <span id="loginConnectedCount">0</span></div>
-                        <button class="blink-btn" id="loginBlinkBtn">● EN LIGNE</button>
-                    </div>
-                </div>
-
-                <!-- Inscription -->
-                <div id="formRegister" class="hidden">
-                    <div class="field">
-                        <label>🖼 Photo de profil</label>
-                        <div class="file-upload" onclick="document.getElementById('profileInput').click()">
-                            <img id="profilePreview" class="profile-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%231a1a1a'/%3E%3Ctext x='24' y='32' text-anchor='middle' font-size='22' fill='%23555'%3E☠%3C/text%3E%3C/svg%3E" alt="profile" />
-                            <span id="profileLabel">Choisir une image</span>
-                            <input type="file" id="profileInput" accept="image/*" onchange="previewProfile(event)" />
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>👤 Pseudo</label>
-                        <input type="text" id="registerPseudo" placeholder="Choisissez un pseudo" />
-                    </div>
-                    <div class="field">
-                        <label>🔑 Code (inscription)</label>
-                        <input type="text" id="registerCode" placeholder="Entrez un code sécurisé" />
-                    </div>
-                    <div class="field">
-                        <label>📋 Votre code généré</label>
-                        <div class="code-display" id="generatedCode">
-                            D4RK-PURGE-2026
-                            <small>gardez ce code précieusement</small>
-                        </div>
-                    </div>
-                    <button class="login-btn" onclick="handleRegister()">➤ S'INSCRIRE</button>
-                    <div class="connected-box mt-16">
-                        <div class="count"><span class="status-dot"></span> Connectés : <span id="registerConnectedCount">0</span></div>
-                        <button class="blink-btn" id="registerBlinkBtn">● EN LIGNE</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center" style="margin-top:18px;font-size:0.7rem;color:#555;letter-spacing:2px;">
-                ⚡ THE DARK PURGE SYSTEM ⚡
-            </div>
-        </div>
-
-        <!-- ========================================================== -->
-        <!-- MAIN PAGE -->
-        <!-- ========================================================== -->
-        <div id="mainPage">
-
-            <!-- Header -->
-            <div class="main-header">
-                <div class="brand">
-                    <span class="led-dot"></span>
-                    <h2>DARK PURGE</h2>
-                    <span style="color:#666;font-size:0.7rem;letter-spacing:2px;">v.2</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <div class="user-profile" id="userProfileDisplay">
-                        <img id="mainProfileImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a1a'/%3E%3Ctext x='20' y='27' text-anchor='middle' font-size='20' fill='%23555'%3E☠%3C/text%3E%3C/svg%3E" alt="profile" />
-                        <div class="info">
-                            <span class="pseudo" id="mainPseudo">Utilisateur</span>
-                            <span class="code" id="mainCode">D4RK-••••</span>
-                        </div>
-                    </div>
-                    <button class="menu-btn" id="menuToggle" aria-label="Menu">⋮</button>
-                </div>
-            </div>
-
-            <!-- Main layout -->
-            <div class="main-layout">
-
-                <!-- Contenu principal -->
-                <div class="main-content">
-
-                    <!-- Article 1 : Dark Purge -->
-                    <div class="article">
-                        <img src="https://i.ibb.co/GvS1CZ5n/DE3-D6-F1-E-69-FD-4-E14-898-C-91580-AD44-ECC.jpg" alt="Dark Purge" />
-                        <h3><span class="icon">☠</span> La Dark Purge</h3>
-                        <p>
-                            Est un système où les <strong>faibles n'ont pas leur place</strong>, où les comptes sont
-                            <strong>bannis</strong> par ceux qui exercent mal leur compte sur <strong>Meta</strong>.
-                            Ici, la justice est <strong>impitoyable</strong>. Chaque signalement est scruté par le
-                            <strong>système Kira</strong>. Les trolls, arnaqueurs et toxiques sont traqués sans relâche.
-                        </p>
-                        <div class="meta">⚔ DARK PURGE v2.0</div>
-                    </div>
-
-                    <!-- Article 2 : Empereurs -->
-                    <div class="article">
-                        <img src="https://i.ibb.co/35hPSwd8/2036-AA78-C7-C6-4-AC5-83-DB-EBC4-C5328-CCB.jpg" alt="Empereurs" />
-                        <h3><span class="icon">👑</span> Les Empereurs</h3>
-                        <p>
-                            <strong>Mr Kira</strong> &amp; <strong>Mr EGO</strong>, les <strong>fondateurs</strong>
-                            de la Dark Purge, vous ont permis d'exercer cette fonction. Vous leur devez
-                            <strong>respect</strong> et <strong>admiration</strong>. Sans leur vision, la Dark Purge
-                            ne serait qu'un fantôme. Leur détermination est le pilier de cet empire.
-                        </p>
-                        <div class="meta">👑 KIRA &amp; EGO</div>
-                    </div>
-
-                    <!-- Article 3 : Qui doit être banni -->
-                    <div class="article">
-                        <img src="https://i.ibb.co/pYz0ZzW/245-E79-FC-D6-F2-4-F74-BE32-ADDC4-E8-B3469.png" alt="Bannissement" />
-                        <h3><span class="icon">⚖</span> Qui doit être banni ?</h3>
-                        <p>
-                            Seuls les <strong>arnaqueurs</strong>, les <strong>racistes</strong>,
-                            les <strong>harceleurs</strong> et les <strong>toxiques</strong>
-                            doivent être <strong>off</strong> 📵. Car ce système nous permet de les
-                            <strong>débusquer</strong> et de les <strong>neutraliser</strong>.
-                            La Dark Purge ne fait pas de discrimination : elle frappe là où le mal se cache.
-                        </p>
-                        <div class="meta">⚖ JUSTICE · SANS PITIÉ</div>
-                    </div>
-
-                    <!-- Article 4 : Comment l'utiliser -->
-                    <div class="article">
-                        <img src="https://i.ibb.co/Rp9yGXSv/9-C5-DA9-CB-33-AB-4-BC4-8-C24-0-AB8-B811-EF06.jpg" alt="Guide" />
-                        <h3><span class="icon">📖</span> Comment l'utiliser ?</h3>
-                        <p>
-                            <strong>🛡 Support ban</strong> — prévient WhatsApp Support des abus. <strong>50%</strong> si assemblé au signalement du compte cibler .<br />
-                            <strong>💬 Fake chat</strong> — crée de fausses preuves. <strong>30%</strong> si assemblé au support ban.<br />
-                            <strong>🤖 Ban bot</strong> — bannissement immédiat par la command<strong>.Kira</strong>. <strong>100%</strong> si il est connecté a kira bot ban .<br />
-                            <strong>🚫 Signaler &amp; bloquer</strong> — spam et ban permanent. <strong>70%</strong> selon le nombre de comptes utilliser.
-                        </p>
-                        <div class="meta">⚡ GUIDE · POWER LEVELS</div>
-                    </div>
-
-                    <div class="main-footer">
-                        <span class="led-dot" style="width:8px;height:8px;"></span>
-                        The dark purge system creat by <strong>lord Kira</strong> and <strong>lord ego</strong>
-                        <span class="led-dot" style="width:8px;height:8px;"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========================================================== -->
-    <!-- OVERLAY + SIDE PANEL (demi-page) -->
-    <!-- ========================================================== -->
-    <div class="panel-overlay" id="panelOverlay"></div>
-    <div class="side-panel" id="sidePanel">
-        <div class="panel-header">
-            <h3><span class="led-dot" style="width:12px;height:12px;"></span> OUTILS</h3>
-            <button class="close-panel" id="closePanel">✕</button>
-        </div>
-
-        <div class="tool-item">
-            <span class="label">🛡 Support ban</span>
-            <span class="action"><a href="https://adouamanacet25-hue.github.io/Kira_higuruma-prime/" target="_blank">ouvrir</a></span>
-        </div>
-        <div class="tool-item">
-            <span class="label">💬 Fake chat</span>
-            <span class="action"><a href="https://adouamanacet25-hue.github.io/Fake-chat-by-lord-Kira/" target="_blank">ouvrir</a></span>
-        </div>
-        <div class="tool-item">
-            <span class="label">🤖 Ban bot</span>
-            <span class="action offline">Problème de connexion 📵</span>
-        </div>
-        <div class="tool-item">
-            <span class="label">📺 My channel</span>
-            <span class="action"><a href="https://whatsapp.com/channel/0029Vb7WJzp84OmBD0fEEJ2X" target="_blank">suivre</a></span>
-        </div>
-        <div class="tool-item">
-            <span class="label">✉ Nous contacter</span>
-            <span class="action" style="font-size:0.75rem;">
-                <a href="mailto:adouamanacet25@gmail.com">email</a> · <a href="https://wa.me/242067210267" target="_blank">WhatsApp</a>
-            </span>
-        </div>
-
-        <div class="panel-footer">
-            <span class="status-dot" style="width:10px;height:10px;"></span>
-            Connectés : <span id="panelConnectedCount" style="color:#ff4d4d;font-weight:700;">0</span>
-        </div>
-    </div>
-
-    <script>
-        // ============================================================
-        // STATE
-        // ============================================================
-        let connectedUsers = Math.floor(Math.random() * 12) + 6;
-        let userPseudo = '';
-        let userCode = '';
-        let userProfileImg = '';
-
-        // ============================================================
-        // CONNECTED USERS UPDATE
-        // ============================================================
-        function updateConnectedCounts() {
-            const delta = Math.floor(Math.random() * 5) - 2;
-            connectedUsers = Math.max(2, connectedUsers + delta);
-            document.getElementById('loginConnectedCount').textContent = connectedUsers;
-            document.getElementById('registerConnectedCount').textContent = connectedUsers;
-            document.getElementById('mainConnectedCount') && (document.getElementById('mainConnectedCount').textContent =
-                connectedUsers);
-            document.getElementById('panelConnectedCount').textContent = connectedUsers;
-        }
-        setInterval(updateConnectedCounts, 5000 + Math.random() * 3000);
-        setTimeout(updateConnectedCounts, 300);
-
-        // ============================================================
-        // TAB SWITCH
-        // ============================================================
-        function switchTab(tab) {
-            const loginForm = document.getElementById('formLogin');
-            const registerForm = document.getElementById('formRegister');
-            const tabLogin = document.getElementById('tabLogin');
-            const tabRegister = document.getElementById('tabRegister');
-            if (tab === 'login') {
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                tabLogin.classList.add('active');
-                tabRegister.classList.remove('active');
-            } else {
-                loginForm.classList.add('hidden');
-                registerForm.classList.remove('hidden');
-                tabRegister.classList.add('active');
-                tabLogin.classList.remove('active');
-                generateCode();
-            }
-        }
-
-        // ============================================================
-        // GENERATE CODE
-        // ============================================================
-        function generateCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = 'D4RK-';
-            for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-            code += '-';
-            for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-            document.getElementById('generatedCode').innerHTML = code +
-                '<small>gardez ce code précieusement</small>';
-        }
-
-        // ============================================================
-        // PROFILE PREVIEW
-        // ============================================================
-        function previewProfile(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    document.getElementById('profilePreview').src = ev.target.result;
-                    document.getElementById('profileLabel').textContent = file.name;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // ============================================================
-        // HANDLE LOGIN
-        // ============================================================
-        function handleLogin() {
-            const pseudo = document.getElementById('loginPseudo').value.trim();
-            const code = document.getElementById('loginCode').value.trim();
-            if (!pseudo || !code) { alert('⚠ Veuillez remplir tous les champs.'); return; }
-            userPseudo = pseudo;
-            userCode = code;
-            userProfileImg = document.getElementById('profilePreview')?.src ||
-                "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a1a'/%3E%3Ctext x='20' y='27' text-anchor='middle' font-size='20' fill='%23555'%3E☠%3C/text%3E%3C/svg%3E";
-            enterMain();
-        }
-
-        // ============================================================
-        // HANDLE REGISTER
-        // ============================================================
-        function handleRegister() {
-            const pseudo = document.getElementById('registerPseudo').value.trim();
-            const code = document.getElementById('registerCode').value.trim();
-            if (!pseudo || !code) { alert('⚠ Veuillez remplir tous les champs.'); return; }
-            userPseudo = pseudo;
-            userCode = code;
-            const img = document.getElementById('profilePreview');
-            userProfileImg = img.src || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%231a1a1a'/%3E%3Ctext x='20' y='27' text-anchor='middle' font-size='20' fill='%23555'%3E☠%3C/text%3E%3C/svg%3E";
-            enterMain();
-        }
-
-        // ============================================================
-        // ENTER MAIN
-        // ============================================================
-        function enterMain() {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('mainPage').style.display = 'block';
-            // update profile
-            document.getElementById('mainProfileImg').src = userProfileImg;
-            document.getElementById('mainPseudo').textContent = userPseudo;
-            document.getElementById('mainCode').textContent = userCode;
-            // update connected counts
-            document.getElementById('mainConnectedCount').textContent = connectedUsers;
-            document.getElementById('panelConnectedCount').textContent = connectedUsers;
-            // animation
-            document.getElementById('mainPage').style.animation = 'none';
-            setTimeout(() => { document.getElementById('mainPage').style.animation = 'fadeIn 0.5s ease'; }, 10);
-        }
-
-        // ============================================================
-        // SIDE PANEL TOGGLE
-        // ============================================================
-        const panel = document.getElementById('sidePanel');
-        const overlay = document.getElementById('panelOverlay');
-
-        function openPanel() {
-            panel.classList.add('open');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePanel() {
-            panel.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        document.getElementById('menuToggle').addEventListener('click', openPanel);
-        document.getElementById('closePanel').addEventListener('click', closePanel);
-        overlay.addEventListener('click', closePanel);
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
-        });
-
-        // ============================================================
-        // ENTER KEY on login/register
-        // ============================================================
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                const loginPage = document.getElementById('loginPage');
-                if (loginPage.style.display !== 'none') {
-                    const loginForm = document.getElementById('formLogin');
-                    if (!loginForm.classList.contains('hidden')) handleLogin();
-                    else handleRegister();
-                }
-            }
-        });
-
-        // ============================================================
-        // BLINK BTN click feedback
-        // ============================================================
-        document.querySelectorAll('.blink-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.style.animation = 'none';
-                setTimeout(() => { this.style.animation = 'blink 1.6s ease-in-out infinite'; }, 50);
-                const txt = this.textContent;
-                this.textContent = '● CONNECTÉ';
-                setTimeout(() => { this.textContent = txt; }, 700);
-            });
-        });
-
-        // ============================================================
-        // INIT
-        // ============================================================
-        window.onload = function() {
-            generateCode();
-            // default profile img if empty
-            const preview = document.getElementById('profilePreview');
-            if (!preview.src || preview.src.includes('svg')) {
-                preview.src =
-                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%231a1a1a'/%3E%3Ctext x='24' y='32' text-anchor='middle' font-size='22' fill='%23555'%3E☠%3C/text%3E%3C/svg%3E";
-            }
-            updateConnectedCounts();
-        };
-
-        console.log('☠ Dark Purge System loaded ☠');
-    </script>
-
-</body>
-</html>
+.welcome-title{
+  font-size:clamp(1.5rem,6vw,2.3rem);
+  font-weight:700;
+  line-height:1.55;
+  letter-spacing:1px;
+  color:#ff3b3b;
+  text-shadow:0 0 18px rgba(255,40,40,.55),0 0 44px rgba(255,0,0,.35);
+  min-height:5.5em;
+  word-break:break-word;
+}
+.typed-cursor{
+  display:inline-block;width:3px;height:1em;
+  background:var(--red);margin-left:3px;vertical-align:-2px;
+  box-shadow:0 0 10px var(--red);
+  animation:blinkCur .8s steps(1) infinite;
+}
+.typed-cursor.done{display:none;}
+@keyframes blinkCur{0%,49%{opacity:1;}50%,100%{opac
